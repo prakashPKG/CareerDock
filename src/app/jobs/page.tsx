@@ -5,6 +5,21 @@ import { Job } from "@/models/Job";
 
 export const dynamic = "force-dynamic";
 
+type JobRow = {
+  _id: { toString(): string };
+  title?: string | null;
+  companyId?: {
+    name?: string | null;
+  } | null;
+  location?: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  remote?: boolean | null;
+  experience?: string | null;
+  skills?: string[] | null;
+  deadline?: Date | string | null;
+};
+
 async function getJobs(): Promise<JobCardData[]> {
   const fallback: JobCardData[] = [
     { id: "demo-job-1", title: "Senior Java Engineer", company: "Nebula Works", location: "Remote", salaryMin: 120000, salaryMax: 165000, remote: true, experience: "4+ years", skills: ["Java", "Spring", "MongoDB"], matchScore: 91, deadline: "2026-06-30" },
@@ -13,17 +28,17 @@ async function getJobs(): Promise<JobCardData[]> {
   ];
   try {
     await connectDB();
-    const rows = await Job.find({ status: "OPEN" }).populate("companyId").sort({ createdAt: -1 }).limit(40).lean();
+    const rows = await Job.find({ status: "OPEN" }).populate("companyId").sort({ createdAt: -1 }).limit(40).lean<JobRow[]>();
     if (!rows.length) return fallback;
-    return rows.map((row: any) => ({
+    return rows.map((row) => ({
       id: row._id.toString(),
-      title: row.title,
+      title: row.title ?? "Untitled role",
       company: row.companyId?.name ?? "CareerDock Partner",
-      location: row.location,
+      location: row.location ?? "Remote",
       salaryMin: row.salaryMin ?? 0,
       salaryMax: row.salaryMax ?? 0,
-      remote: row.remote,
-      experience: row.experience,
+      remote: row.remote ?? false,
+      experience: row.experience ?? "Not specified",
       skills: row.skills ?? [],
       matchScore: 82,
       deadline: row.deadline ? new Date(row.deadline).toISOString().slice(0, 10) : "Open"

@@ -7,6 +7,20 @@ import { Application } from "@/models/Application";
 
 export const dynamic = "force-dynamic";
 
+type ApplicantRow = {
+  _id: { toString(): string };
+  seekerId?: {
+    firstName?: string | null;
+    lastName?: string | null;
+    skills?: string[] | null;
+  } | null;
+  jobId?: {
+    title?: string | null;
+  } | null;
+  stage?: AtsApplicant["stage"];
+  matchScore?: number | null;
+};
+
 async function getApplicants(): Promise<AtsApplicant[]> {
   const fallback: AtsApplicant[] = [
     { id: "demo-1", name: "Aarav Sharma", role: "Java Backend Engineer", stage: "APPLIED", matchScore: 88, skills: ["Java", "Spring", "MongoDB"] },
@@ -16,13 +30,13 @@ async function getApplicants(): Promise<AtsApplicant[]> {
   ];
   try {
     await connectDB();
-    const rows = await Application.find().populate("seekerId jobId").sort({ createdAt: -1 }).limit(50).lean();
+    const rows = await Application.find().populate("seekerId jobId").sort({ createdAt: -1 }).limit(50).lean<ApplicantRow[]>();
     if (!rows.length) return fallback;
-    return rows.map((row: any) => ({
+    return rows.map((row) => ({
       id: row._id.toString(),
       name: `${row.seekerId?.firstName ?? "Candidate"} ${row.seekerId?.lastName ?? ""}`.trim(),
       role: row.jobId?.title ?? "Applicant",
-      stage: row.stage,
+      stage: row.stage ?? "APPLIED",
       matchScore: row.matchScore ?? 0,
       skills: row.seekerId?.skills ?? []
     }));
