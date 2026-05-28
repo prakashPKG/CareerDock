@@ -24,7 +24,16 @@ export async function POST(request: Request) {
   if (exists) return NextResponse.json({ error: "Email already registered" }, { status: 409 });
 
   const passwordHash = await bcrypt.hash(parsed.password, 12);
-  const user = await User.create({ ...parsed, passwordHash, activeAt: new Date() });
+  const user = await User.create({
+    ...parsed,
+    socials: {
+      linkedin: parsed.linkedin,
+      github: parsed.github,
+      portfolio: parsed.portfolio
+    },
+    passwordHash,
+    activeAt: new Date()
+  });
   await ActivityLog.create({ actorId: user._id, action: "USER_REGISTERED", entity: "User", entityId: user._id });
   await sendMail({
     to: user.email,

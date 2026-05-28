@@ -23,6 +23,7 @@ const userSchema = new Schema(
     city: String,
     education: String,
     experience: String,
+    profilePhotoUrl: String,
     skills: [{ type: String, index: true }],
     resumeId: { type: Schema.Types.ObjectId, ref: "Resume" },
     companyId: { type: Schema.Types.ObjectId, ref: "Company" },

@@ -9,6 +9,14 @@ export const signupSchema = z.object({
   phone: z.string().optional(),
   country: z.string().optional(),
   city: z.string().optional(),
+  dob: z.coerce.date().optional(),
+  gender: z.string().optional(),
+  education: z.string().optional(),
+  experience: z.string().optional(),
+  profilePhotoUrl: z.string().optional(),
+  linkedin: z.string().optional(),
+  github: z.string().optional(),
+  portfolio: z.string().optional(),
   skills: z.array(z.string()).default([])
 });
 

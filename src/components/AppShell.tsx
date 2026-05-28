@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Bookmark, BriefcaseBusiness, GraduationCap, LayoutDashboard, Map, PanelsTopLeft, UserRound } from "lucide-react";
 import { NotificationBadge } from "@/components/NotificationBadge";
+import { LogoutButton } from "@/components/LogoutButton";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: PanelsTopLeft },
@@ -31,6 +32,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <NotificationBadge />
               <span className="hidden lg:inline">Notifications</span>
             </Link>
+            <LogoutButton />
           </div>
         </nav>
       </header>
